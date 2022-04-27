@@ -1,26 +1,20 @@
-const player = (name, tile) => {
-    
-    const getName = () => {
-        return name;
-    }
-
-    const getTile = () => {
-        return tile;
-    }
-
-    return {
-        getName, 
-        getTile
-    };
-};
-
 const gameBoard = (() => {
+    const player = (name, mark, turn) => {
+        return {name, mark, turn};
+    };
+    
+    const playerOne = player('Scottie', 'X', true);
+    const playerTwo = player('OG', 'O', false);
+
+    let round = 1;
 
     let _board = [
         '','','',
         '','','',
-        '','','',
+        '','',''
     ];
+
+    const checkWin = ()
 
     const setTile = (index, tile) => {
         _board[index] = tile;
@@ -50,28 +44,19 @@ const displayController = (() => {
     // Listen for player choice and get cell index
     cell.forEach(box => {
         box.addEventListener('click', (e) => {
-            console.log(e.target.dataset.index);
-            let dataIndex = e.target.dataset.index;
-            gameBoard.setTile(dataIndex,'O');
-            drawTile();
+            // gameBoard.setTile(e.target.dataset.index, 'X');
+            console.log(e.target.dataset.index)
+            updatTiles();  
         })
     })
 
-    const drawTile = () => {
+    const updatTiles = () => {
         for (let i = 0; i < 9; i++) {
             cell[i].textContent = gameBoard.getTile(i);
         }
     }
 
-
     return {
-        drawTile
+        updatTiles
     }
 })();
-
- const gameMaster = (() => {
-    const playerOne = player('Scottie', 'X');
-    const playerTwo = player('OG', 'O');
-
-    
- })();
