@@ -10,6 +10,9 @@ const gameBoard = (() => {
     // Round counter to check for which players turn it is and if it ends in a draw
     let round = 1;
 
+    // Game state so it knows when to stop
+    let gameDone = false;
+
     // Empty board for start
     let _board = [
         '','','',
@@ -30,16 +33,22 @@ const gameBoard = (() => {
 
     // Sets plays the current round 
     const playRound = (currentIndex) => {
-        console.log(checkWin());
-        if(checkWin()) {
-            gameBoard.setTile(currentIndex, _currentPlayerMark());
-            displayController.updateEndWin();
-        }
-        else if(round === 9) {
-            gameBoard.setTile(currentIndex, _currentPlayerMark());
-            displayController.updateEndDraw();
+        // If game is over don't mark tile
+        if(gameDone) {
+            return;
         } else {
             gameBoard.setTile(currentIndex, _currentPlayerMark());
+        }
+        // Check for win or draw else move round on
+        if(checkWinX() || checkWinO()) {
+            displayController.updateEndWin(_currentPlayerMark());
+            gameDone = true;
+        }
+        else if(round === 9) {
+            displayController.updateEndDraw();
+            gameDone = true;
+
+        } else {
             round++;
         }
     }
@@ -50,10 +59,18 @@ const gameBoard = (() => {
     }
 
     // Check for winner 
-    const checkWin = () => {
+    const checkWinX = () => {
         return winCons.some((combination) => {
-            combination.every((i) => {
-                getTile(i) === _currentPlayerMark;
+            return combination.every((i) => {
+                return getTile(i) === "X";
+            });
+          });
+    }
+
+    const checkWinO = () => {
+        return winCons.some((combination) => {
+            return combination.every((i) => {
+                return getTile(i) === "O";
             });
           });
     }
@@ -74,13 +91,16 @@ const gameBoard = (() => {
             _board[i] = '';
         }
         round = 1;
+        gameDone = false;
     }
 
     return {
         setTile,
         getTile,
         resetGame,
-        playRound
+        playRound,
+        checkWinO,
+        checkWinX
     }
 })();
 
@@ -93,8 +113,7 @@ const displayController = (() => {
     cell.forEach(box => {
         box.addEventListener('click', (e) => {
             if(e.target.textContent === '') {
-                gameBoard.playRound(e.target.dataset.index)
-                console.log(e.target.dataset.index)
+                gameBoard.playRound(e.target.dataset.index);
                 updateTiles();  
             }
         })
@@ -118,8 +137,8 @@ const displayController = (() => {
         displayResult.textContent = "It's a draw!";
     }
 
-    const updateEndWin = () => {
-        displayResult.textContent = "Someone won";
+    const updateEndWin = (playerMark) => {
+        displayResult.textContent = `${playerMark} has won!`;
     }
 
     return {
