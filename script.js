@@ -4,8 +4,8 @@ const gameBoard = (() => {
     };
     
     // Initialize players for now
-    const scottie = _player('Scottie', 'X');
-    const og = _player('OG', 'O');
+    const playerOne = _player('Scottie', 'X');
+    const playerTwo = _player('OG', 'O');
 
     // Round counter to check for which players turn it is and if it ends in a draw
     let round = 1;
@@ -37,11 +37,12 @@ const gameBoard = (() => {
         if(gameDone) {
             return;
         } else {
+            displayController.updatePrompt(_currentPlayerName());
             gameBoard.setTile(currentIndex, _currentPlayerMark());
         }
         // Check for win or draw else move round on
         if(checkWinX() || checkWinO()) {
-            displayController.updateEndWin(_currentPlayerMark());
+            displayController.updateEndWin(_winnerName(_currentPlayerMark()));
             gameDone = true;
         }
         else if(round === 9) {
@@ -55,7 +56,16 @@ const gameBoard = (() => {
 
     // Checks for which players turn it is
     const _currentPlayerMark = () => {
-        return round % 2 === 1 ? scottie.mark : og.mark;
+        return round % 2 === 1 ? playerOne.mark : playerTwo.mark;
+    }
+
+    const _currentPlayerName = () => {
+        return round % 2 === 1 ? playerTwo.name : playerOne.name;
+    }
+
+    // Check name for winner
+    const _winnerName = (winnerMark) => {
+        return playerOne.mark === winnerMark ? playerOne.name : playerTwo.name;
     }
 
     // Check for winner 
@@ -100,12 +110,15 @@ const gameBoard = (() => {
         resetGame,
         playRound,
         checkWinO,
-        checkWinX
+        checkWinX,
+        _currentPlayerMark,
+        _winnerName
     }
 })();
 
 const displayController = (() => {
     const cell = document.querySelectorAll('.cell');
+    const startPrompt = document.querySelector('.name-container');
     const displayResult = document.querySelector('.game-result');
     const resetBtn = document.querySelector('button');
 
@@ -122,8 +135,12 @@ const displayController = (() => {
     resetBtn.addEventListener('click', () => {
         gameBoard.resetGame();
         updateTiles();
-        displayResult.textContent = 'hello';
     });
+
+    // Update name for turn prompt
+    const updatePrompt = (playerName) => {
+        startPrompt.textContent = `${playerName}'s turn!`;
+    }
 
     // Updates and populates the board with the current player marks
     const updateTiles = () => {
@@ -135,13 +152,16 @@ const displayController = (() => {
     // Update display for winner or if it's a draw
     const updateEndDraw = () => {
         displayResult.textContent = "It's a draw!";
+        startPrompt.textContent = "Rematch!";
     }
 
-    const updateEndWin = (playerMark) => {
-        displayResult.textContent = `${playerMark} has won!`;
+    const updateEndWin = (playerName) => {
+        displayResult.textContent = `${playerName} has won!`;
+        startPrompt.textContent = `LETS GO`;
     }
 
     return {
+        updatePrompt,
         updateTiles,
         updateEndDraw,
         updateEndWin
