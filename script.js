@@ -1,3 +1,4 @@
+// Initialize board and check for win/draw
 const gameBoard = (() => {
     const _player = (name, mark) => {
         return {name, mark};
@@ -20,6 +21,7 @@ const gameBoard = (() => {
         '','',''
     ];
 
+    // Aarray to compare win conditions with
     const winCons = [
         [0, 1, 2], // Horizontal wins
         [3, 4, 5],
@@ -59,6 +61,7 @@ const gameBoard = (() => {
         return round % 2 === 1 ? playerOne.mark : playerTwo.mark;
     }
 
+    // Check for the name of player on each turn
     const _currentPlayerName = () => {
         return round % 2 === 1 ? playerTwo.name : playerOne.name;
     }
@@ -77,6 +80,7 @@ const gameBoard = (() => {
           });
     }
 
+    // 
     const checkWinO = () => {
         return winCons.some((combination) => {
             return combination.every((i) => {
@@ -116,6 +120,7 @@ const gameBoard = (() => {
     }
 })();
 
+// Update board for each round and text prompts
 const displayController = (() => {
     const cell = document.querySelectorAll('.cell');
     const startPrompt = document.querySelector('.name-container');
@@ -132,6 +137,7 @@ const displayController = (() => {
         })
     })
 
+    // Player input and update to board
     resetBtn.addEventListener('click', () => {
         gameBoard.resetGame();
         updateTiles();
@@ -155,6 +161,7 @@ const displayController = (() => {
         startPrompt.textContent = "Rematch!";
     }
 
+    // Displays name of winner and congratulations
     const updateEndWin = (playerName) => {
         displayResult.textContent = `${playerName} has won!`;
         startPrompt.textContent = `LETS GO`;
