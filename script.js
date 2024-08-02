@@ -120,7 +120,8 @@ const gameBoard = (() => {
     }
 })();
 
-// Update board for each round and text prompts
+// Update board for each round and text promptssears345
+
 const displayController = (() => {
     const cell = document.querySelectorAll('.cell');
     const startPrompt = document.querySelector('.name-container');
@@ -139,6 +140,7 @@ const displayController = (() => {
 
     // Player input and update to board
     resetBtn.addEventListener('click', () => {
+        displayResult.textContent = '';
         gameBoard.resetGame();
         updateTiles();
     });
